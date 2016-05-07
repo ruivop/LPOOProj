@@ -24,13 +24,15 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.lpooproj.game.Proj;
 
+import Objects.Brick;
+import Objects.ObjImp;
 import Scenes.Hud;
 import Objects.Bomber;
 
 /**
  * Created by Asus on 07/05/2016.
  */
-public class PlayScrene implements Screen{
+public class PlayScreen implements Screen{
 
     private Proj game;
     private OrthographicCamera gamecam;
@@ -66,14 +68,14 @@ public class PlayScrene implements Screen{
     }
 
 
-    public PlayScrene(Proj game){
+    public PlayScreen(Proj game){
         this.game = game;
         gamecam = new OrthographicCamera();
         gamePort = new StretchViewport(Proj.V_WIDTH,Proj.V_HEIGHT, gamecam);
         hud = new Hud();
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level1.tmx");
+        map = mapLoader.load("stage1.tmx");
         rederer = new OrthogonalTiledMapRenderer((TiledMap) map);
 
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight()/2,0);
@@ -81,23 +83,9 @@ public class PlayScrene implements Screen{
         world = new World(new Vector2(0,0),true);
         b2db = new Box2DDebugRenderer();
 
-        BodyDef bDef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fDef = new FixtureDef();
-        Body body;
-
+        Brick brick;
         for(MapObject object: map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rectangle = ((RectangleMapObject)object).getRectangle();
-
-            bDef.type = BodyDef.BodyType.StaticBody;
-            bDef.position.set(rectangle.getX() + rectangle.getWidth()/2, rectangle.getY() + rectangle.getHeight()/2);
-
-            body= world.createBody(bDef);
-
-            shape.setAsBox(rectangle.getWidth()/2,rectangle.getHeight()/2);
-            fDef.shape = shape;
-
-            body.createFixture(fDef);
+            brick = new Brick(object,world);
         }
         bomber = new Bomber(world);
 

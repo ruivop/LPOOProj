@@ -1,27 +1,31 @@
 package Objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 
 /**
  * Created by Asus on 07/05/2016.
  */
-public class Bomber extends Sprite{
+public class Bomber extends Sprite {
 
     public World world;
     public Body body;
+    private Texture bomberStand;
 
-    public Bomber(World world){
+    public Bomber(World world) {
         this.world = world;
 
+        bomberStand = new Texture(Gdx.files.internal("14bomberman.png"));
+
         BodyDef bDef = new BodyDef();
-        bDef.position.set(32,32);
+        bDef.position.set(32, 32);
         bDef.type = BodyDef.BodyType.DynamicBody;
 
         body = world.createBody(bDef);
@@ -33,6 +37,7 @@ public class Bomber extends Sprite{
         fDef.shape = shape;
 
         body.createFixture(fDef);
+        create();
 
         //System.out.println(body.getPosition().x);
         //System.out.println(body.getPosition().y);
@@ -40,4 +45,7 @@ public class Bomber extends Sprite{
         //System.out.println(body.getPosition().x);
     }
 
+    public void create() {
+
+    }
 }
