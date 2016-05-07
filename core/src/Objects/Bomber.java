@@ -1,4 +1,4 @@
-package Sprites;
+package Objects;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;

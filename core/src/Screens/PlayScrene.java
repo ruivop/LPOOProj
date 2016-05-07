@@ -1,6 +1,5 @@
-package Screnes;
+package Screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -9,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -22,13 +20,12 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.lpooproj.game.Proj;
 
 import Scenes.Hud;
-import Sprites.Bomber;
+import Objects.Bomber;
 
 /**
  * Created by Asus on 07/05/2016.
@@ -49,14 +46,16 @@ public class PlayScrene implements Screen{
     Box2DDebugRenderer b2db;
 
     public void handleInput(float dt){
-        if (Gdx.input.isKeyPressed(Input.Keys.UP))
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && bomber.body.getLinearVelocity().y <= 20)
             bomber.body.applyLinearImpulse(new Vector2(0, 10f), bomber.body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && bomber.body.getLinearVelocity().y >= -20)
             bomber.body.applyLinearImpulse(new Vector2(0, -10f), bomber.body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && bomber.body.getLinearVelocity().x <= 20)
+        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && bomber.body.getLinearVelocity().x <= 20)
             bomber.body.applyLinearImpulse(new Vector2(10f, 0), bomber.body.getWorldCenter(), true);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && bomber.body.getLinearVelocity().x >= -20)
+        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && bomber.body.getLinearVelocity().x >= -20)
             bomber.body.applyLinearImpulse(new Vector2(-10f, 0), bomber.body.getWorldCenter(), true);
+        else if(!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY))
+            bomber.body.applyLinearImpulse((bomber.body.getLinearVelocity()).scl(-1), bomber.body.getWorldCenter(), true);
     }
 
     public void update(float dt){
