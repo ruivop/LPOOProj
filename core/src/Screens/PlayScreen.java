@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -40,6 +41,7 @@ public class PlayScreen implements Screen{
     private Hud hud;
     Texture img;
     private Bomber bomber;
+    private TextureAtlas atlas;
 
     private TmxMapLoader mapLoader;
     private Map map;
@@ -47,17 +49,24 @@ public class PlayScreen implements Screen{
     World world;
     Box2DDebugRenderer b2db;
 
+
     public void handleInput(float dt){
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && bomber.body.getLinearVelocity().y <= 20)
-            bomber.body.applyLinearImpulse(new Vector2(0, 10f), bomber.body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && bomber.body.getLinearVelocity().y >= -20)
-            bomber.body.applyLinearImpulse(new Vector2(0, -10f), bomber.body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && bomber.body.getLinearVelocity().x <= 20)
-            bomber.body.applyLinearImpulse(new Vector2(10f, 0), bomber.body.getWorldCenter(), true);
-        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && bomber.body.getLinearVelocity().x >= -20)
-            bomber.body.applyLinearImpulse(new Vector2(-10f, 0), bomber.body.getWorldCenter(), true);
-        else if(!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY))
+        if(!Gdx.input.isKeyPressed(Input.Keys.ANY_KEY))
             bomber.body.applyLinearImpulse((bomber.body.getLinearVelocity()).scl(-1), bomber.body.getWorldCenter(), true);
+        else {
+            float velMax = 70f;
+            float velX = bomber.body.getLinearVelocity().x;
+            float velY = bomber.body.getLinearVelocity().y;
+
+            if (Gdx.input.isKeyPressed(Input.Keys.UP) && velY <= velMax)
+                bomber.body.applyLinearImpulse(new Vector2(-velX, velMax), bomber.body.getWorldCenter(), true);
+            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && velY >= -velMax)
+                bomber.body.applyLinearImpulse(new Vector2(-velX, -velMax), bomber.body.getWorldCenter(), true);
+            else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && velX <= velMax)
+                bomber.body.applyLinearImpulse(new Vector2(velMax, -velY), bomber.body.getWorldCenter(), true);
+            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && velX >= -velMax)
+                bomber.body.applyLinearImpulse(new Vector2(-velMax, -velY), bomber.body.getWorldCenter(), true);
+        }
     }
 
     public void update(float dt){
@@ -65,17 +74,20 @@ public class PlayScreen implements Screen{
         //gamecam.update();
         world.step(1/60f, 6,2);
         rederer.setView(gamecam);
+        bomber.update(dt);
     }
 
 
     public PlayScreen(Proj game){
+        atlas = new TextureAtlas("allAssests.pack");
+
         this.game = game;
         gamecam = new OrthographicCamera();
         gamePort = new StretchViewport(Proj.V_WIDTH,Proj.V_HEIGHT, gamecam);
         hud = new Hud();
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("stage1.tmx");
+        map = mapLoader.load("level2.tmx");
         rederer = new OrthogonalTiledMapRenderer((TiledMap) map);
 
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight()/2,0);
@@ -87,9 +99,14 @@ public class PlayScreen implements Screen{
         for(MapObject object: map.getLayers().get(1).getObjects().getByType(RectangleMapObject.class)){
             brick = new Brick(object,world);
         }
-        bomber = new Bomber(world);
+        bomber = new Bomber(world, this);
 
     }
+
+    public TextureAtlas getAtlas(){
+        return atlas;
+    }
+
 
     @Override
     public void show() {
@@ -102,6 +119,11 @@ public class PlayScreen implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         rederer.render();
         b2db.render(world,gamecam.combined);
+        game.batch.setProjectionMatrix(gamecam.combined);
+        game.batch.begin();
+        bomber.draw(game.batch);
+        game.batch.end();
+
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
     }

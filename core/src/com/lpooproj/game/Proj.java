@@ -7,8 +7,8 @@ import Screens.PlayScreen;
 
 public class Proj extends Game {
 	public SpriteBatch batch;
-	public static final int V_WIDTH = 13*16;
-	public static final int V_HEIGHT = 11*16;
+	public static final int V_WIDTH = 9*16;
+	public static final int V_HEIGHT = 9*16;
 
 	
 	@Override
