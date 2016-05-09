@@ -49,23 +49,23 @@ public class Bomber extends Sprite {
 
         //down
         Array<TextureRegion> frames = new Array<TextureRegion>();
-        frames.add(new TextureRegion(getTexture(),67,0,16,27));
-        frames.add(new TextureRegion(getTexture(),50,0,16,27));
         frames.add(new TextureRegion(getTexture(),86,0,16,27));
+        frames.add(new TextureRegion(getTexture(),50,0,16,27));
+        frames.add(new TextureRegion(getTexture(),68,0,16,27));
         down = new Animation(0.1f,frames);
         frames.clear();
 
         //left
+        frames.add(new TextureRegion(getTexture(),141,0,16,27));
         frames.add(new TextureRegion(getTexture(),104,0,16,27));
         frames.add(new TextureRegion(getTexture(),122,0,16,27));
-        frames.add(new TextureRegion(getTexture(),141,0,16,27));
         left = new Animation(0.1f,frames);
         frames.clear();
 
         //UP
+        frames.add(new TextureRegion(getTexture(),253,0,16,27));
         frames.add(new TextureRegion(getTexture(),217,0,16,27));
         frames.add(new TextureRegion(getTexture(),235,0,16,27));
-        frames.add(new TextureRegion(getTexture(),253,0,16,27));
         up = new Animation(0.1f,frames);
         frames.clear();
 
@@ -108,28 +108,31 @@ public class Bomber extends Sprite {
 
         if(body.getLinearVelocity().len() != 0){
             stateR = true;
+            stateTimer += dt;
         }
         else
             stateR = false;
 
 
         TextureRegion region;
+        Animation aAnimation;
         switch (stateP){
             case UP:
-                region = up.getKeyFrame(stateTimer,stateR);
+                aAnimation = up;
                 break;
             case LEFT:
-                region = left.getKeyFrame(stateTimer,stateR);
+                aAnimation = left;
                 break;
             case DOWN:
-                region = down.getKeyFrame(stateTimer,stateR);
+                aAnimation = down;
                 break;
             default:
             case STOP:
-                region = lastAnim.getKeyFrame(stateTimer,stateR);
+                aAnimation = lastAnim;
                 break;
-
         }
+
+        region = aAnimation.getKeyFrame(stateTimer,stateR);
 
         if((body.getLinearVelocity().x > 0 || !isLeft) && !region.isFlipX()){
             region.flip(true,false);
@@ -140,9 +143,9 @@ public class Bomber extends Sprite {
             isLeft = true;
         }
 
-        stateTimer = stateP == lastState ? stateTimer + dt: 0;
-
+        //stateTimer = stateP == lastState ? stateTimer + dt: 0;
         lastState = stateP;
+        lastAnim = aAnimation;
 
         return region;
     }
