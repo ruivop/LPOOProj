@@ -1,14 +1,9 @@
 package com.lpooproj.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
-import Screnes.PlayScrene;
+import Screens.PlayScreen;
 
 public class Proj extends Game {
 	public SpriteBatch batch;
@@ -19,7 +14,7 @@ public class Proj extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new PlayScrene(this));
+		setScreen(new PlayScreen(this));
 
 	}
 
